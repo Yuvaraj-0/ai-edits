@@ -4,7 +4,8 @@ import { type ClassValue, clsx } from "clsx";
 import qs from "qs";
 import { twMerge } from "tailwind-merge";
 
-// import { aspectRatioOptions } from "@/constants";
+
+import { aspectRatioOptions } from "@/components/constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -85,19 +86,26 @@ export function removeKeysFromQuery({
 }
 
 // DEBOUNCE
-export const debounce = (func: (...args: any[]) => void, delay: number) => {
-  let timeoutId: NodeJS.Timeout | null;
-  return (...args: any[]) => {
+export const debounce = <T extends unknown[]>(func: (...args: T) => void, delay: number) => {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  return (...args: T) => {
     if (timeoutId) clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func.apply(null, args), delay);
+    timeoutId = setTimeout(() => func(...args), delay);
   };
 };
 
 // GE IMAGE SIZE
+interface ImageType {
+  width?: number;
+  height?: number;
+  aspectRatio?: string;
+}
+
 export type AspectRatioKey = keyof typeof aspectRatioOptions;
+
 export const getImageSize = (
   type: string,
-  image: any,
+  image: ImageType,
   dimension: "width" | "height"
 ): number => {
   if (type === "fill") {
@@ -108,6 +116,7 @@ export const getImageSize = (
   }
   return image?.[dimension] || 1000;
 };
+
 
 // DOWNLOAD IMAGE
 export const download = (url: string, filename: string) => {
@@ -131,27 +140,31 @@ export const download = (url: string, filename: string) => {
 };
 
 // DEEP MERGE OBJECTS
-export const deepMergeObjects = (obj1: any, obj2: any) => {
-  if(obj2 === null || obj2 === undefined) {
-    return obj1;
-  }
+type PlainObject = Record<string, unknown>;
 
-  let output = { ...obj2 };
+export const deepMergeObjects = (obj1: PlainObject, obj2: PlainObject): PlainObject => {
+  if (!obj2) return obj1;
 
-  for (let key in obj1) {
-    if (obj1.hasOwnProperty(key)) {
+  const output: PlainObject = { ...obj2 };
+
+  for (const key in obj1) {
+    if (Object.prototype.hasOwnProperty.call(obj1, key)) {
+      const val1 = obj1[key];
+      const val2 = obj2[key];
+
       if (
-        obj1[key] &&
-        typeof obj1[key] === "object" &&
-        obj2[key] &&
-        typeof obj2[key] === "object"
+        val1 &&
+        typeof val1 === "object" &&
+        val2 &&
+        typeof val2 === "object"
       ) {
-        output[key] = deepMergeObjects(obj1[key], obj2[key]);
+        output[key] = deepMergeObjects(val1 as PlainObject, val2 as PlainObject);
       } else {
-        output[key] = obj1[key];
+        output[key] = val1;
       }
     }
   }
 
   return output;
 };
+
