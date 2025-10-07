@@ -7,7 +7,7 @@ import {navLinks} from '@/components/constants'
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { Button } from "../ui/button";
 import { useClerk } from "@clerk/nextjs";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // Authentication components will be added later
 // Button component will be used when authentication is implemented
 const Sidebar = () => {

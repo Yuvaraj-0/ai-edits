@@ -1,24 +1,21 @@
-"use client"; 
-import Sidebar from '@/components/shared/Sidebar'
-import React from 'react'
-import MobileNav from '@/components/shared/MobileNav'
+"use client";
 import { ClerkProvider } from "@clerk/nextjs";
-const Layout = ({children} : {children: React.ReactNode}) => {
+import React from "react";
+import MobileNav from "@/components/shared/MobileNav";
+import Sidebar from "@/components/shared/Sidebar";
+
+const ClientLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <ClerkProvider>
-    <main className='root'>
+      <main className="root">
         <Sidebar />
         <MobileNav />
-
-        <div className='root-container'>
-            <div className='wrapper'>
-            {children}
-            </div>
-
+        <div className="root-container">
+          <div className="wrapper">{children}</div>
         </div>
-    </main>
+      </main>
     </ClerkProvider>
-  )
-}
+  );
+};
 
-export default Layout
+export default ClientLayout;
