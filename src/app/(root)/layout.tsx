@@ -1,3 +1,4 @@
+"use client"; 
 import Sidebar from '@/components/shared/Sidebar'
 import React from 'react'
 import MobileNav from '@/components/shared/MobileNav'
