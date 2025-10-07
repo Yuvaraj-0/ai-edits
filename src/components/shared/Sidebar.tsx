@@ -7,12 +7,17 @@ import {navLinks} from '@/components/constants'
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { Button } from "../ui/button";
 import { useClerk } from "@clerk/nextjs";
+import { useRouter } from "next/router";
 // Authentication components will be added later
 // Button component will be used when authentication is implemented
 const Sidebar = () => {
   const pathname = usePathname();
   const { signOut } = useClerk();
-  
+  const router = useRouter();
+  const handleSignOut = async () => {
+    await signOut();        // sign out first
+    router.push("/sign-in"); // then redirect manually
+  };
 
   return (
     <aside className="sidebar">
@@ -83,7 +88,7 @@ const Sidebar = () => {
                 
                 <h1 className="p-4"><UserButton /></h1>
                 <button
-      onClick={() => signOut(() => window.location.href = "/sign-in")}
+      onClick={handleSignOut}
       className="px-4 py-2 bg-red-500 text-white rounded-md"
     >
       Sign Out

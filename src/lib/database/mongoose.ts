@@ -7,9 +7,8 @@ interface MongooseConnection {
   promise: Promise<Mongoose> | null;
 }
 
-// Extend globalThis to include our cached property
 declare global {
-  // eslint-disable-next-line no-var
+ 
   var _mongoose: MongooseConnection | undefined;
 }
 
