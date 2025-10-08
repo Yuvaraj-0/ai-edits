@@ -6,10 +6,19 @@ const isPublicRoute = createRouteMatcher([
   '/sign-up',
   '/sso-callback',
   '/api/webhooks/clerk',
+  
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (isPublicRoute(req)) return NextResponse.next();
+  const pathname = req.nextUrl.pathname;
+  if (
+    isPublicRoute(req) ||
+    pathname.startsWith('/sign-in') ||
+    pathname.startsWith('/sign-up') ||
+    pathname.startsWith('/sso-callback')
+  ) {
+    return NextResponse.next();
+  }
 
   const { userId } = await auth();
   if (!userId) {
