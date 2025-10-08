@@ -2,11 +2,17 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
-  '/sign-in',
-  '/sign-up',
-  '/sso-callback',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/sso-callback(.*)',
   '/api/webhooks/clerk',
-  
+  '/',
+]);
+
+const isProtectedRoute = createRouteMatcher([
+  '/profile(.*)',
+  '/credits(.*)',
+  '/transformations(.*)'
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -20,9 +26,11 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.next();
   }
 
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.redirect(new URL('/sign-in', req.url));
+  if (isProtectedRoute(req)) {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.redirect(new URL('/sign-in', req.url));
+    }
   }
 
   return NextResponse.next();
